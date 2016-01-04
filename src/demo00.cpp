@@ -17,16 +17,10 @@ Demo00::~Demo00() {}
 
 void Demo00::Prepare()
 {
-
 	vector<shader_info> shader_infos = { { GL_VERTEX_SHADER, "shaders/SimpleVertexShader.vertexshader" },
 	{ GL_FRAGMENT_SHADER, "shaders/SimpleFragmentShader.fragmentshader" } };
 
-	/*ProgramObj */program = LoadShaders(shader_infos);
-	//glUseProgram(program);
-
-	//glfwSetKeyCallback(window, key_callback);
-
-	//glClearColor(0.0f, 0.0f, 0.2f, 0.0f);
+	program = LoadShaders(shader_infos);
 
 	static GLfloat vertexBuffer[] = {
 		-0.5f, -0.5f,
@@ -37,9 +31,7 @@ void Demo00::Prepare()
 		0.5f, -0.5f
 	};
 
-	//VertexArrayObj vao;
 	glBindVertexArray(vao);
-	//BufferObj buffer;
 
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexBuffer), vertexBuffer, GL_STATIC_DRAW);
@@ -53,6 +45,5 @@ void Demo00::Draw()
 {
 	glUseProgram(program);
 	glBindVertexArray(vao);
-	//glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }

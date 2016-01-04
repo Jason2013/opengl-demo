@@ -23,6 +23,9 @@ add_executable(DEMO
     src/globjs.cpp
     src/objloader.cpp
     src/texture.cpp
+    src/demo00.cpp
+    src/demo01.cpp
+
 )
 
 set_target_properties(DEMO PROPERTIES

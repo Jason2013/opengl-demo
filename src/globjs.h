@@ -142,6 +142,7 @@ public:
 		this->prog_id = rhs.prog_id;
 		rhs.id = 0;
 		rhs.prog_id = 0;
+		return *this;
 	}
 	~ShaderObj() { clean(); }
 	operator GLuint() { return id; }
@@ -175,6 +176,7 @@ public:
 		clean();
 		this->prog_id = rhs.prog_id;
 		rhs.prog_id = 0;
+		return *this;
 	}
 	~ProgramObj() { clean(); }
 	operator GLuint() { return prog_id; }

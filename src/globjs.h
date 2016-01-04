@@ -37,6 +37,28 @@ public:
 	const std::string err_msg;
 };
 
+class ObjModelFormatError : public MyExcept
+{
+public:
+	ObjModelFormatError(const std::string& fname) : filename(fname) {}
+	const std::string filename;
+};
+
+class BmpFormatError : public MyExcept
+{
+public:
+	BmpFormatError(const std::string& fname) : filename(fname) {}
+	const std::string filename;
+};
+
+class DdsFormatError : public MyExcept
+{
+public:
+	DdsFormatError(const std::string& fname) : filename(fname) {}
+	const std::string filename;
+};
+
+
 class glfwEnv
 {
 public:

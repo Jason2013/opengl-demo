@@ -9,7 +9,7 @@ include(CreateLaunchers)
 
 include_directories(C:/chenchang/dev/glfw-3.1.2/include
     C:/chenchang/dev/glew-1.13.0/include
-    common
+    C:/chenchang/dev/glm
 )
 
 link_libraries(opengl32.lib
@@ -21,10 +21,12 @@ add_executable(DEMO
     src/main.cpp
     src/shader.cpp
     src/globjs.cpp
+    src/objloader.cpp
+    src/texture.cpp
 )
 
 set_target_properties(DEMO PROPERTIES
-    COMPILE_DEFINITIONS GLEW_STATIC
+    COMPILE_DEFINITIONS "GLEW_STATIC;_CRT_SECURE_NO_WARNINGS"
 )
 
 create_target_launcher(DEMO WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/")

@@ -1,6 +1,13 @@
 #ifndef SHADER_HPP
 #define SHADER_HPP
 
-GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path);
+
+struct shader_info
+{
+	GLuint type;
+	std::string shader_file_path;
+};
+
+GLuint LoadShaders(const vector<shader_info>&);
 
 #endif

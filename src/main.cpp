@@ -1,6 +1,7 @@
 
 
 #include <iostream>
+#include <vector>
 using namespace std;
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -22,7 +23,7 @@ int main()
 	try {
 
 		glfwEnv glfw;
-		 
+
 		glfwWindowHint(GLFW_SAMPLES, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -32,9 +33,15 @@ int main()
 
 		glfwMakeContextCurrent(window);
 
-		glfwSetKeyCallback(window, key_callback);
-
 		glewEnv glew;
+
+		vector<shader_info> shader_infos = { {GL_VERTEX_SHADER, "shaders/SimpleVertexShader.vertexshader" },
+			{ GL_FRAGMENT_SHADER, "shaders/SimpleFragmentShader.fragmentshader" } };
+
+		GLuint programID = LoadShaders(shader_infos);
+		glUseProgram(programID);
+
+		glfwSetKeyCallback(window, key_callback);
 
 		glClearColor(0.0f, 0.0f, 0.2f, 0.0f);
 
@@ -57,9 +64,6 @@ int main()
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 		glEnableVertexAttribArray(0);
 
-		GLuint programID = LoadShaders("shaders/SimpleVertexShader.vertexshader", "shaders/SimpleFragmentShader.fragmentshader");
-		glUseProgram(programID);
-
 		while (!glfwWindowShouldClose(window))
 		{
 			glClear(GL_COLOR_BUFFER_BIT);
@@ -68,17 +72,29 @@ int main()
 			glfwPollEvents();
 		}
 	}
-	catch (const glfwInitExcept& /*e*/)
+	catch (const FileNotFound& ex)
 	{
-		cerr << "Failed to initialize GLFW!" << endl;
+		err_hander(string("Impossible to open ") + ex.filename + string(". Are you in the right directory?"));
 	}
-	catch (const glewExcept& /*e*/)
+	catch (const ShaderCompileError& ex)
 	{
-		cerr << "Failed to initialize GLEW!" << endl;
+		err_hander(string("Shader compilation error: ") + ex.err_msg);
+	}
+	catch (const ProgramCompileError& ex)
+	{
+		err_hander(string("Program compilation error: ") + ex.err_msg);
+	}
+	catch (const glfwEnvInitExcept& /*e*/)
+	{
+		err_hander("Failed to initialize GLFW!");
+	}
+	catch (const glewEnvInitExcept& /*e*/)
+	{
+		err_hander("Failed to initialize GLEW!");
 	}
 	catch (const glfwWinExcept& /*e*/)
 	{
-		cerr << "Failed to create window!" << endl;
+		err_hander("Failed to create window!");
 	}
 
 	return 0;

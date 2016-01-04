@@ -20,6 +20,7 @@ link_libraries(opengl32.lib
 add_executable(DEMO
     src/main.cpp
     src/shader.cpp
+    src/globjs.cpp
 )
 
 set_target_properties(DEMO PROPERTIES

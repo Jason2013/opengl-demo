@@ -5,43 +5,36 @@
 #include <GLFW/glfw3.h>
 #include <string>
 
-class MyExcept
-{
-};
+void err_hander(const std::string&);
 
-class glfwEnvInitExcept : public MyExcept
-{
+class MyExcept {};
 
-};
+class glfwEnvInitExcept : public MyExcept {};
 
-class glfwInitExcept : public MyExcept
-{
+class glfwWinExcept : public MyExcept {};
 
-};
-
-class glfwWinExcept : public MyExcept
-{
-
-};
-
-
-class glewExcept : public MyExcept
-{
-
-};
-
-class glExcept : public MyExcept
-{
-
-};
+class glewEnvInitExcept : public MyExcept {};
 
 class FileNotFound : public MyExcept
 {
 public:
-	FileNotFound(const char * filename):_filename(filename){}
-	std::string _filename;
+	FileNotFound(const std::string& fname) : filename(fname) {}
+	const std::string filename;
 };
 
+class ShaderCompileError : public MyExcept
+{
+public:
+	ShaderCompileError(const std::string& msg) : err_msg(msg) {}
+	const std::string err_msg;
+};
+
+class ProgramCompileError : public MyExcept
+{
+public:
+	ProgramCompileError(const std::string& msg) : err_msg(msg) {}
+	const std::string err_msg;
+};
 
 class glfwEnv
 {
@@ -50,7 +43,7 @@ public:
 	{
 		if (glfwInit() != GL_TRUE)
 			throw glfwEnvInitExcept();
-	}//glewEnv
+	}
 	~glfwEnv() { glfwTerminate(); }
 };
 
@@ -60,7 +53,7 @@ public:
 	glewEnv()
 	{
 		if (glewInit() != GLEW_OK)
-			throw glewExcept();
+			throw glewEnvInitExcept();
 	}
 };
 
@@ -83,8 +76,8 @@ private:
 class VertexArrayObj
 {
 public:
-	VertexArrayObj(bool immediate= true)
-	{ 
+	VertexArrayObj(bool immediate = true)
+	{
 		glGenVertexArrays(1, &id);
 		if (immediate)
 			glBindVertexArray(id);

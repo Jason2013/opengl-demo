@@ -105,38 +105,28 @@ class ShaderObj
 public:
 	ShaderObj(const ShaderObj&) = delete;
 	ShaderObj & operator=(const ShaderObj&) = delete;
-	ShaderObj(GLuint shader_id = 0) :id(shader_id)/*, prog_id(0)*/ {
-		//std::cout << "ShaderObj->Construct(id=" << id << ", prog_id=" << prog_id << ")" << std::endl;
-	}
+	ShaderObj(GLuint shader_id = 0) :id(shader_id) {}
 	ShaderObj(ShaderObj && rhs)
 	{
-		//std::cout << "ShaderObj->Move(" << this->id << ", " << this->prog_id << "), (" << rhs.id << ", " << rhs.prog_id << ")" << std::endl;
 		clean();
 		this->id = rhs.id;
 		this->prog_id = rhs.prog_id;
 		rhs.id = 0;
 		rhs.prog_id = 0;
 	}
-	~ShaderObj() { /*std::cout << "ShaderObj->Destructor(" << this->id << ", " << this->prog_id <<  ")" << std::endl;*/ clean(); }
+	~ShaderObj() { clean(); }
 	operator GLuint() { return id; }
 private:
 	void clean()
 	{
-		//std::cout << "ShaderObj->Clean(id=" << id << ", prog_id=" << prog_id << ")" << std::endl;
 		if (id)
 		{
 			if (prog_id)
-			{
-				//std::cout << "glDetachShader(" << prog_id << ", " << id << ");" << std::endl;
 				glDetachShader(prog_id, id);
-				prog_id = 0;
-			}
-			//std::cout << "glDeleteShader(" << id << ");" << std::endl;
 			glDeleteShader(id);
-			id = 0;
 		}
 	}
-	GLuint id=0, prog_id=0;
+	GLuint id = 0, prog_id = 0;
 
 };
 
@@ -149,9 +139,7 @@ public:
 	ProgramObj(ProgramObj && rhs)
 	{
 		clean();
-		//this->id = rhs.id;
 		this->prog_id = rhs.prog_id;
-		//rhs.id = 0;
 		rhs.prog_id = 0;
 	}
 	~ProgramObj() { clean(); }
@@ -160,18 +148,14 @@ public:
 	{
 		glAttachShader(prog_id, shader);
 		shader.prog_id = prog_id;
-
 	}
 private:
 	void clean()
 	{
-		//std::cout << "ProgramObj(prog_id=" << prog_id << ")" << std::endl;
 		if (prog_id)
 			glDeleteProgram(prog_id);
 	}
-	//GLuint prog_id = 0;
-	GLuint prog_id =0;
-
+	GLuint prog_id = 0;
 };
 
 #endif // __GLOBJS_H_

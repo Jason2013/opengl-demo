@@ -81,37 +81,21 @@ ShaderObj LoadShader(GLenum type, string shader_file_path)
 
 ProgramObj LoadShaders(const vector<shader_info>& shaders_infos) {
 
-	//for_each(shaders.cbegin(), shaders.cend(), [&shaders](const shader_info& info) {
-	//	shaders.push_back(LoadShader(info.type, info.shader_file_path));
-	//});
-
-	vector<ShaderObj> shaders;// (shaders_infos.size());
+	vector<ShaderObj> shaders;
 	for (const shader_info& info : shaders_infos)
 	{
-		//std::cout << "++++++++++++++++++++++++++++++++" << std::endl;
 		shaders.emplace_back(LoadShader(info.type, info.shader_file_path));
-
-
-		//ShaderObj so = LoadShader(info.type, info.shader_file_path);
-		//shaders.emplace_back(std::move(so));
-		//shaders.push_back(std::move(so));
-		//shaders.push_back(LoadShader(info.type, info.shader_file_path));
-		//std::cout << "--------------------------------" << std::endl;
 	}
-	std::cout << "emplace_back(shader_id)" << std::endl;
 
 	GLint Result = GL_FALSE;
 	int InfoLogLength;
 
 	// Link the program
 	printf("Linking program\n");
-	//GLuint ProgramID = glCreateProgram();
 	ProgramObj ProgramID = glCreateProgram();
 
-	//for (GLuint id : shader_ids)
 	for (ShaderObj & id : shaders)
 	{
-		//glAttachShader(ProgramID, id);
 		ProgramID.AttachShader(id);
 	}
 
@@ -127,12 +111,6 @@ ProgramObj LoadShaders(const vector<shader_info>& shaders_infos) {
 			throw ProgramCompileError(&ProgramErrorMessage[0]);
 		printf("%s\n", &ProgramErrorMessage[0]);
 	}
-
-	//for (GLuint id : shader_ids)
-	//{
-	//	glDetachShader(ProgramID, id);
-	//	glDeleteShader(id);
-	//}
 
 	return ProgramID;
 }

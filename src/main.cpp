@@ -22,10 +22,33 @@ using std::unique_ptr;
 #include "demo00.h"
 #include "demo01.h"
 
+vector<unique_ptr<Demo>> demos;
+vector<unique_ptr<Demo>>::size_type curr_demo =0;
+
+void prepare()
+{
+	demos.push_back(unique_ptr<Demo>(new Demo00));
+	demos.push_back(unique_ptr<Demo>(new Demo01));
+
+	for (auto & p : demos)
+		p->Prepare();
+
+	curr_demo = 0;
+}
+
+void choose_demo(int key)
+{
+	if (key < GLFW_KEY_0 || (key - GLFW_KEY_0) >= (int)demos.size())
+		return;
+	curr_demo = key - GLFW_KEY_0;
+}
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
+	else
+		choose_demo(key);
 }
 
 extern const int nWinWidth = 1024;
@@ -50,19 +73,14 @@ int main()
 
 		glfwSetKeyCallback(window, key_callback);
 
-		unique_ptr<Demo> demo00(new Demo00);
-		demo00->Prepare();
-
-		unique_ptr<Demo> demo1(new Demo01);
-		demo1->Prepare();
+		prepare();
 
 		glClearColor(0.0f, 0.0f, 0.2f, 0.0f);
 
 		while (!glfwWindowShouldClose(window))
 		{
 			glClear(GL_COLOR_BUFFER_BIT);
-			demo00->Draw();
-			demo1->Draw();
+			demos[curr_demo]->Draw();
 
 			glfwSwapBuffers(window);
 			glfwPollEvents();

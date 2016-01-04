@@ -1,6 +1,7 @@
 #ifndef SHADER_HPP
 #define SHADER_HPP
 
+#include "globjs.h"
 
 struct shader_info
 {
@@ -8,6 +9,6 @@ struct shader_info
 	std::string shader_file_path;
 };
 
-GLuint LoadShaders(const vector<shader_info>&);
+ProgramObj LoadShaders(const vector<shader_info>&);
 
 #endif

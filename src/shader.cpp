@@ -34,12 +34,13 @@ void check_shader_type(GLenum type)
 #endif // _DEBUG
 
 
-GLuint LoadShader(GLenum type, string shader_file_path)
+ShaderObj LoadShader(GLenum type, string shader_file_path)
 {
 	check_shader_type(type);
 
 	// Create the shader
 	GLuint ShaderID = glCreateShader(type);
+	ShaderObj shader(ShaderID);
 
 	// Read the Shader code from the file
 	std::string ShaderCode;
@@ -74,27 +75,44 @@ GLuint LoadShader(GLenum type, string shader_file_path)
 		printf("%s\n", &VertexShaderErrorMessage[0]);
 	}
 
-	return ShaderID;
+	//return ShaderID;
+	return shader;
 }
 
-GLuint LoadShaders(const vector<shader_info>& shaders) {
+ProgramObj LoadShaders(const vector<shader_info>& shaders_infos) {
 
-	vector<GLuint> shader_ids;
+	//for_each(shaders.cbegin(), shaders.cend(), [&shaders](const shader_info& info) {
+	//	shaders.push_back(LoadShader(info.type, info.shader_file_path));
+	//});
 
-	for_each(shaders.cbegin(), shaders.cend(), [&shader_ids](const shader_info& info) {
-		shader_ids.push_back(LoadShader(info.type, info.shader_file_path));
-	});
+	vector<ShaderObj> shaders;// (shaders_infos.size());
+	for (const shader_info& info : shaders_infos)
+	{
+		//std::cout << "++++++++++++++++++++++++++++++++" << std::endl;
+		shaders.emplace_back(LoadShader(info.type, info.shader_file_path));
+
+
+		//ShaderObj so = LoadShader(info.type, info.shader_file_path);
+		//shaders.emplace_back(std::move(so));
+		//shaders.push_back(std::move(so));
+		//shaders.push_back(LoadShader(info.type, info.shader_file_path));
+		//std::cout << "--------------------------------" << std::endl;
+	}
+	std::cout << "emplace_back(shader_id)" << std::endl;
 
 	GLint Result = GL_FALSE;
 	int InfoLogLength;
 
 	// Link the program
 	printf("Linking program\n");
-	GLuint ProgramID = glCreateProgram();
+	//GLuint ProgramID = glCreateProgram();
+	ProgramObj ProgramID = glCreateProgram();
 
-	for (GLuint id : shader_ids)
+	//for (GLuint id : shader_ids)
+	for (ShaderObj & id : shaders)
 	{
-		glAttachShader(ProgramID, id);
+		//glAttachShader(ProgramID, id);
+		ProgramID.AttachShader(id);
 	}
 
 	glLinkProgram(ProgramID);
@@ -110,11 +128,11 @@ GLuint LoadShaders(const vector<shader_info>& shaders) {
 		printf("%s\n", &ProgramErrorMessage[0]);
 	}
 
-	for (GLuint id : shader_ids)
-	{
-		glDetachShader(ProgramID, id);
-		glDeleteShader(id);
-	}
+	//for (GLuint id : shader_ids)
+	//{
+	//	glDetachShader(ProgramID, id);
+	//	glDeleteShader(id);
+	//}
 
 	return ProgramID;
 }

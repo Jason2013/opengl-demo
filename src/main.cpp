@@ -7,6 +7,7 @@ using namespace std;
 #include <GLFW/glfw3.h>
 #include "shader.h"
 #include "globjs.h"
+#include "conio.h"
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -38,7 +39,7 @@ int main()
 		vector<shader_info> shader_infos = { {GL_VERTEX_SHADER, "shaders/SimpleVertexShader.vertexshader" },
 			{ GL_FRAGMENT_SHADER, "shaders/SimpleFragmentShader.fragmentshader" } };
 
-		GLuint programID = LoadShaders(shader_infos);
+		ProgramObj programID = LoadShaders(shader_infos);
 		glUseProgram(programID);
 
 		glfwSetKeyCallback(window, key_callback);
@@ -96,6 +97,6 @@ int main()
 	{
 		err_hander("Failed to create window!");
 	}
-
+	//getch();
 	return 0;
 }

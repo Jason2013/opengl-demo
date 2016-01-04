@@ -121,6 +121,35 @@ private:
 	GLuint id;
 };
 
+class TextureObj
+{
+public:
+	TextureObj(const TextureObj&) = delete;
+	TextureObj& operator=(const TextureObj&) = delete;
+	TextureObj(TextureObj && rhs)
+	{
+		id = rhs.id;
+		rhs.id = 0;
+	}
+	TextureObj& operator=(TextureObj && rhs)
+	{
+		clean();
+		id = rhs.id;
+		rhs.id = 0;
+		return *this;
+	}
+	TextureObj() { glGenTextures(1, &id); }
+	~TextureObj() { clean(); }
+	operator GLuint() { return id; }
+private:
+	void clean()
+	{
+		if (id)
+			glDeleteTextures(1, &id);
+	}
+	GLuint id;
+};
+
 class ShaderObj
 {
 	friend class ProgramObj;

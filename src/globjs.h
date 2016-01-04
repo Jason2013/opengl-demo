@@ -108,6 +108,13 @@ public:
 	ShaderObj(GLuint shader_id = 0) :id(shader_id) {}
 	ShaderObj(ShaderObj && rhs)
 	{
+		this->id = rhs.id;
+		this->prog_id = rhs.prog_id;
+		rhs.id = 0;
+		rhs.prog_id = 0;
+	}
+	ShaderObj& operator=(ShaderObj && rhs)
+	{
 		clean();
 		this->id = rhs.id;
 		this->prog_id = rhs.prog_id;
@@ -126,7 +133,7 @@ private:
 			glDeleteShader(id);
 		}
 	}
-	GLuint id = 0, prog_id = 0;
+	GLuint id, prog_id;
 
 };
 
@@ -137,6 +144,11 @@ public:
 	ProgramObj & operator=(const ProgramObj&) = delete;
 	ProgramObj(GLuint id = 0) :prog_id(id) {}
 	ProgramObj(ProgramObj && rhs)
+	{
+		this->prog_id = rhs.prog_id;
+		rhs.prog_id = 0;
+	}
+	ProgramObj& operator=(ProgramObj && rhs)
 	{
 		clean();
 		this->prog_id = rhs.prog_id;

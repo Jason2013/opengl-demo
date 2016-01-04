@@ -97,6 +97,6 @@ int main()
 	{
 		err_hander("Failed to create window!");
 	}
-	//getch();
+
 	return 0;
 }

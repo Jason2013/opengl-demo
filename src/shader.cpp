@@ -75,13 +75,13 @@ ShaderObj LoadShader(GLenum type, string shader_file_path)
 		printf("%s\n", &VertexShaderErrorMessage[0]);
 	}
 
-	//return ShaderID;
 	return shader;
 }
 
 ProgramObj LoadShaders(const vector<shader_info>& shaders_infos) {
 
 	vector<ShaderObj> shaders;
+	shaders.reserve(shaders_infos.size());
 	for (const shader_info& info : shaders_infos)
 	{
 		shaders.emplace_back(LoadShader(info.type, info.shader_file_path));

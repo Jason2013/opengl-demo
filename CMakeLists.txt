@@ -10,6 +10,7 @@ include(CreateLaunchers)
 include_directories(C:/chenchang/dev/glfw-3.1.2/include
     C:/chenchang/dev/glew-1.13.0/include
     C:/chenchang/dev/glm
+    ${CMAKE_SOURCE_DIR}/src
 )
 
 link_libraries(opengl32.lib
@@ -23,9 +24,8 @@ add_executable(DEMO
     src/globjs.cpp
     src/objloader.cpp
     src/texture.cpp
-    src/demo00.cpp
-    src/demo01.cpp
-
+    src/demo00/demo00.cpp
+    src/demo01/demo01.cpp
 )
 
 set_target_properties(DEMO PROPERTIES

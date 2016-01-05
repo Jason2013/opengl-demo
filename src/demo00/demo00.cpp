@@ -14,11 +14,17 @@ extern const int nWinHeight;
 void Demo00::Finalize() {}
 Demo00::~Demo00() {}
 
+void Demo00::Active()
+{
+	glUseProgram(program);
+	glBindVertexArray(vao);
+	glDisable(GL_DEPTH_TEST);
+}
 
 void Demo00::Prepare()
 {
-	vector<shader_info> shader_infos = { { GL_VERTEX_SHADER, "shaders/SimpleVertexShader.vertexshader" },
-	{ GL_FRAGMENT_SHADER, "shaders/SimpleFragmentShader.fragmentshader" } };
+	vector<shader_info> shader_infos = { { GL_VERTEX_SHADER, "shaders/demo00/SimpleVertexShader.vertexshader" },
+	{ GL_FRAGMENT_SHADER, "shaders/demo00/SimpleFragmentShader.fragmentshader" } };
 
 	program = LoadShaders(shader_infos);
 
@@ -43,7 +49,6 @@ void Demo00::Prepare()
 
 void Demo00::Draw()
 {
-	glUseProgram(program);
-	glBindVertexArray(vao);
+	glClear(GL_COLOR_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }

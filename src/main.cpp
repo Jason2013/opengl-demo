@@ -22,11 +22,13 @@ using std::unique_ptr;
 #include "texture.h"
 
 #include "demo.h"
-#include "demo00.h"
-#include "demo01.h"
+#include "demo00/demo00.h"
+#include "demo01/demo01.h"
 
 vector<unique_ptr<Demo>> demos;
-vector<unique_ptr<Demo>>::size_type curr_demo =0;
+unsigned int curr_demo = 0xffff;
+
+void choose_demo(int);
 
 void prepare()
 {
@@ -36,14 +38,19 @@ void prepare()
 	for (auto & p : demos)
 		p->Prepare();
 
-	curr_demo = 0;
+	choose_demo(GLFW_KEY_0); //select demo 0
 }
 
 void choose_demo(int key)
 {
 	if (key < GLFW_KEY_0 || (key - GLFW_KEY_0) >= (int)demos.size())
 		return;
-	curr_demo = key - GLFW_KEY_0;
+	unsigned int new_demo = key - GLFW_KEY_0;
+	if (new_demo != curr_demo)
+	{
+		curr_demo = new_demo;
+		demos[curr_demo]->Active();
+	}
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -83,7 +90,7 @@ int main()
 
 		while (!glfwWindowShouldClose(window))
 		{
-			glClear(GL_COLOR_BUFFER_BIT);
+			demos[curr_demo]->Time(glfwGetTime());
 			demos[curr_demo]->Draw();
 
 			glfwSwapBuffers(window);

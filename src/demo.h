@@ -4,9 +4,12 @@
 class Demo
 {
 public:
-	virtual void Prepare() = 0;
-	virtual void Draw() = 0;
-	virtual void Finalize() = 0;
+	virtual void Time(double time) {}
+	virtual void Active() {}
+	virtual void Key(int key) {}
+	virtual void Prepare() {};
+	virtual void Draw() {};
+	virtual void Finalize() {};
 	virtual ~Demo() {};
 };
 

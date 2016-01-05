@@ -13,11 +13,12 @@
 class Demo01 : public Demo
 {
 public:
-	Demo01():vao(false){}
+	Demo01() :vao(false) {}
+	virtual void Active() override;
+	virtual void Time(double time) override;
 	virtual void Prepare();
 	virtual void Draw();
-	virtual void Finalize();
-	virtual ~Demo01();
+
 private:
 	ProgramObj program;
 	VertexArrayObj vao;

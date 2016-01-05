@@ -7,32 +7,29 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
 using std::vector;
+using namespace glm;
 
 extern const int nWinWidth;
 extern const int nWinHeight;
 
-void Demo01::Finalize(){}
-Demo01::~Demo01(){}
-
-
 void Demo01::Prepare()
 {
 	// Create and compile our GLSL program from the shaders
-	vector<shader_info> shader_infos2 = { { GL_VERTEX_SHADER, "shaders/TransformVertexShader.vertexshader" },
-	{ GL_FRAGMENT_SHADER, "shaders/TextureFragmentShader.fragmentshader" } };
+	vector<shader_info> shader_infos2 = { { GL_VERTEX_SHADER, "shaders/demo01/TransformVertexShader.vertexshader" },
+	{ GL_FRAGMENT_SHADER, "shaders/demo01/TextureFragmentShader.fragmentshader" } };
 	program = LoadShaders(shader_infos2);
 
 	// Get a handle for our "MVP" uniform
 	MatrixID = glGetUniformLocation(program, "MVP");
 
 	// Load the texture
-	Texture = loadDDS("models/uvmap.DDS");
+	Texture = loadDDS("models/demo01/uvmap.DDS");
 
 	// Get a handle for our "myTextureSampler" uniform
 	TextureID = glGetUniformLocation(program, "myTextureSampler");
 
 	// Read our .obj file
-	loadOBJ("models/suzanne.obj", vertices, uvs, normals);
+	loadOBJ("models/demo01/suzanne.obj", vertices, uvs, normals);
 
 	glUseProgram(program);
 
@@ -86,9 +83,30 @@ void Demo01::Prepare()
 	glBindVertexArray(0);
 }
 
-void Demo01::Draw() 
+void Demo01::Time(double time)
+{
+	ProjectionMatrix = glm::perspective(45.0f, (float)nWinWidth / (float)nWinHeight, 0.1f, 100.0f);
+	ViewMatrix = glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
+
+	float angle = (float)(time)* (3.1415926f / 180.f)*30.0f;// / 12.0f;
+
+	glm::mat4x4 RotateMatrix = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 1.0f, 0.0f));
+
+	ModelMatrix = glm::translate(glm::mat4(1.0), glm::vec3(0, 0, -4)) * RotateMatrix;
+	MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+}
+
+void Demo01::Active()
 {
 	glUseProgram(program);
 	glBindVertexArray(vao);
+	glEnable(GL_DEPTH_TEST);
+}
+
+void Demo01::Draw()
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 }

@@ -14,6 +14,7 @@ class Demo00 : public Demo
 {
 public:
 	Demo00():vao(false){}
+	virtual void Active() override;
 	virtual void Prepare();
 	virtual void Draw();
 	virtual void Finalize();

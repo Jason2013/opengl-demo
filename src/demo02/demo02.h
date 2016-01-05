@@ -13,7 +13,7 @@
 class Demo02 : public Demo
 {
 public:
-	Demo02(GLFWwindow * win):Demo(win),vao(false), Texture(false) {}
+	Demo02(GLFWwindow * win) :Demo(win), vao(false), Texture(false), Texture2(false) {}
 	virtual void Active() override;
 	virtual void Time(double time) override;
 	virtual void Prepare() override;
@@ -31,10 +31,9 @@ private:
 	std::vector<glm::vec2> uvs;
 	std::vector<glm::vec3> normals; // Won't be used at the moment.
 
-	GLuint MatrixID;
-
 	// Load the texture
 	TextureObj Texture;
+	TextureObj Texture2;
 
 	// Get a handle for our "myTextureSampler" uniform
 	GLuint TextureID;
@@ -42,10 +41,22 @@ private:
 	glm::mat4 ProjectionMatrix;
 	glm::mat4 ViewMatrix;
 	glm::mat4 ModelMatrix;
+	glm::mat3 NormalMatrix;
 	glm::mat4 MVP;
 
 	//GLuint vertexbuffer;
-	BufferObj vertexbuffer, uvbuffer;
+	BufferObj vertexbuffer, normalbuffer, uvbuffer;
+
+
+	GLint locAmbient;
+	GLint locDiffuse;
+	GLint locLight;
+	GLint locMVP;
+	GLint locMV;
+	GLint locNM;
+	GLint locColorMap;
+	GLint locNormalMap;
+
 };
 
 #endif

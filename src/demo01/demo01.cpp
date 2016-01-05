@@ -104,6 +104,7 @@ void Demo01::Time(double time)
 
 void Demo01::Active()
 {
+	glfwSetWindowTitle(Window(), "OBJ Model: suzanne");
 	glUseProgram(program);
 	glBindVertexArray(vao);
 	glEnable(GL_DEPTH_TEST);

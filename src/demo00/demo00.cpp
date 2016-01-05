@@ -16,6 +16,7 @@ Demo00::~Demo00() {}
 
 void Demo00::Active()
 {
+	glfwSetWindowTitle(Window(), "Two Trianges");
 	glUseProgram(program);
 	glBindVertexArray(vao);
 	glDisable(GL_DEPTH_TEST);

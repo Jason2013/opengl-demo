@@ -6,11 +6,19 @@
 class Demo
 {
 public:
+	Demo(GLFWwindow * win) :window(win) {}
 	virtual void Time(double time) {}
-	virtual void Active() {}
+	virtual void Active() 
+	{
+		if (!prepared)
+		{
+			Prepare();
+			prepared = true;
+		}
+	}
 	virtual void ResizeWindow(int width, int height) { glViewport(0, 0, width, height); }
 	virtual void Key(int key) {}
-	virtual void Prepare(GLFWwindow* win) { window = win; assert(window); };
+	virtual void Prepare() {};
 	virtual void Draw() {};
 	virtual void Finalize() {};
 	virtual ~Demo() {};
@@ -19,6 +27,7 @@ public:
 
 private:
 	GLFWwindow* window = 0;
+	bool prepared = false;
 };
 
 #endif

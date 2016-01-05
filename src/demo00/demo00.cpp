@@ -16,16 +16,16 @@ Demo00::~Demo00() {}
 
 void Demo00::Active()
 {
+	Demo::Active();
+
 	glfwSetWindowTitle(Window(), "Two Trianges");
 	glUseProgram(program);
 	glBindVertexArray(vao);
 	glDisable(GL_DEPTH_TEST);
 }
 
-void Demo00::Prepare(GLFWwindow * win)
+void Demo00::Prepare()
 {
-	Demo::Prepare(win);
-
 	vector<shader_info> shader_infos = { { GL_VERTEX_SHADER, "shaders/demo00/SimpleVertexShader.vertexshader" },
 	{ GL_FRAGMENT_SHADER, "shaders/demo00/SimpleFragmentShader.fragmentshader" } };
 

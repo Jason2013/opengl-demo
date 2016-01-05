@@ -24,6 +24,7 @@ using std::unique_ptr;
 #include "demo.h"
 #include "demo00/demo00.h"
 #include "demo01/demo01.h"
+#include "demo02/demo02.h"
 
 vector<unique_ptr<Demo>> demos;
 unsigned int curr_demo = 0xffff;
@@ -32,11 +33,9 @@ void choose_demo(int);
 
 void prepare(GLFWwindow * win)
 {
-	demos.push_back(unique_ptr<Demo>(new Demo00));
-	demos.push_back(unique_ptr<Demo>(new Demo01));
-
-	for (auto & p : demos)
-		p->Prepare(win);
+	demos.push_back(unique_ptr<Demo>(new Demo00(win)));
+	demos.push_back(unique_ptr<Demo>(new Demo01(win)));
+	demos.push_back(unique_ptr<Demo>(new Demo02(win)));
 
 	choose_demo(GLFW_KEY_0); //select demo 0
 }

@@ -26,6 +26,7 @@ add_executable(DEMO
     src/texture.cpp
     src/demo00/demo00.cpp
     src/demo01/demo01.cpp
+    src/demo02/demo02.cpp
 )
 
 set_target_properties(DEMO PROPERTIES

@@ -18,10 +18,8 @@ void Demo01::ResizeWindow(int width, int height)
 	ProjectionMatrix = glm::perspective(45.0f, (float)width / (float)height, 0.1f, 100.0f);
 }
 
-void Demo01::Prepare(GLFWwindow* win)
+void Demo01::Prepare()
 {
-	Demo::Prepare(win);
-
 	// Create and compile our GLSL program from the shaders
 	vector<shader_info> shader_infos2 = { { GL_VERTEX_SHADER, "shaders/demo01/TransformVertexShader.vertexshader" },
 	{ GL_FRAGMENT_SHADER, "shaders/demo01/TextureFragmentShader.fragmentshader" } };
@@ -104,6 +102,8 @@ void Demo01::Time(double time)
 
 void Demo01::Active()
 {
+	Demo::Active();
+
 	glfwSetWindowTitle(Window(), "OBJ Model: suzanne");
 	glUseProgram(program);
 	glBindVertexArray(vao);

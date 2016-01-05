@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
+#include <GLFW/glfw3.h>
 
 #include "demo.h"
 #include "globjs.h"
@@ -13,10 +14,10 @@
 class Demo01 : public Demo
 {
 public:
-	Demo01() :vao(false), Texture(false) {}
+	Demo01(GLFWwindow * win) :Demo(win), vao(false), Texture(false) {}
 	virtual void Active() override;
 	virtual void Time(double time) override;
-	virtual void Prepare(GLFWwindow*) override;
+	virtual void Prepare() override;
 	virtual void Draw();
 	virtual void ResizeWindow(int width, int height) override;
 

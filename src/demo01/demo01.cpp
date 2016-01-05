@@ -29,6 +29,7 @@ void Demo01::Prepare()
 	MatrixID = glGetUniformLocation(program, "MVP");
 
 	// Load the texture
+	glActiveTexture(GL_TEXTURE0);
 	Texture = loadDDS("models/demo01/uvmap.DDS");
 
 	// Get a handle for our "myTextureSampler" uniform
@@ -53,14 +54,6 @@ void Demo01::Prepare()
 
 	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
 	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
-
-
-
-	// Bind our texture in Texture Unit 0
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, Texture);
-	// Set our "myTextureSampler" sampler to user Texture Unit 0
-	glUniform1i(TextureID, 1);
 
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
@@ -108,6 +101,11 @@ void Demo01::Active()
 	glUseProgram(program);
 	glBindVertexArray(vao);
 	glEnable(GL_DEPTH_TEST);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, Texture);
+	glUniform1i(TextureID, 0);
+
 }
 
 void Demo01::Draw()

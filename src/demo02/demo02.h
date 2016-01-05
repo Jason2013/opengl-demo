@@ -45,6 +45,10 @@ private:
 	glm::mat3 NormalMatrix;
 	glm::mat4 MVP;
 
+	glm::vec3 vEyeLight = { -100.0f, 100.0f, 150.0f };
+	glm::vec4 vAmbientColor = { 0.2f, 0.2f, 0.2f, 1.0f };
+	glm::vec4 vDiffuseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+
 	//GLuint vertexbuffer;
 	BufferObj vertexbuffer, normalbuffer, uvbuffer;
 

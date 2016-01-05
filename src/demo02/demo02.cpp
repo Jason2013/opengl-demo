@@ -106,12 +106,6 @@ void Demo02::Prepare()
 
 	glBindVertexArray(0);
 
-
-
-	GLfloat vEyeLight[] = { -100.0f, 100.0f, 150.0f };
-	GLfloat vAmbientColor[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-	GLfloat vDiffuseColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-
 	locAmbient = glGetUniformLocation(program, "ambientColor");
 	assert(locAmbient != -1);
 
@@ -134,10 +128,9 @@ void Demo02::Prepare()
 	locNormalMap = glGetUniformLocation(program, "normalMap");
 	assert(locNormalMap != -1);
 
-
-	glUniform4fv(locAmbient, 1, vAmbientColor);
-	glUniform4fv(locDiffuse, 1, vDiffuseColor);
-	glUniform3fv(locLight, 1, vEyeLight);
+	glUniform4fv(locAmbient, 1, &vAmbientColor[0]);
+	glUniform4fv(locDiffuse, 1, &vDiffuseColor[0]);
+	glUniform3fv(locLight, 1, &vEyeLight[0]);
 
 	glm::mat3 nm = glm::mat3(ModelMatrix);
 

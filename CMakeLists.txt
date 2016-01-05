@@ -24,6 +24,7 @@ add_executable(DEMO
     src/globjs.cpp
     src/objloader.cpp
     src/texture.cpp
+    src/sphere.cpp
     src/demo00/demo00.cpp
     src/demo01/demo01.cpp
     src/demo02/demo02.cpp

@@ -16,8 +16,10 @@ public:
 	Demo01() :vao(false), Texture(false) {}
 	virtual void Active() override;
 	virtual void Time(double time) override;
-	virtual void Prepare();
+	virtual void Prepare(GLFWwindow*) override;
 	virtual void Draw();
+	virtual void ResizeWindow(int width, int height) override;
+
 
 private:
 	ProgramObj program;

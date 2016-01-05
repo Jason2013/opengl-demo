@@ -21,8 +21,10 @@ void Demo00::Active()
 	glDisable(GL_DEPTH_TEST);
 }
 
-void Demo00::Prepare()
+void Demo00::Prepare(GLFWwindow * win)
 {
+	Demo::Prepare(win);
+
 	vector<shader_info> shader_infos = { { GL_VERTEX_SHADER, "shaders/demo00/SimpleVertexShader.vertexshader" },
 	{ GL_FRAGMENT_SHADER, "shaders/demo00/SimpleFragmentShader.fragmentshader" } };
 

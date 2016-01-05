@@ -13,12 +13,13 @@
 class Demo00 : public Demo
 {
 public:
-	Demo00():vao(false){}
+	Demo00() :vao(false) {}
 	virtual void Active() override;
-	virtual void Prepare();
-	virtual void Draw();
-	virtual void Finalize();
-	virtual ~Demo00();
+	//virtual void ResizeWindow(int width, int height) override;
+	virtual void Prepare(GLFWwindow*) override;
+	virtual void Draw() override;
+	virtual void Finalize() override;
+	virtual ~Demo00() override;
 private:
 	ProgramObj program;
 	VertexArrayObj vao;

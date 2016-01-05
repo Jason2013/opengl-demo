@@ -30,13 +30,13 @@ unsigned int curr_demo = 0xffff;
 
 void choose_demo(int);
 
-void prepare()
+void prepare(GLFWwindow * win)
 {
 	demos.push_back(unique_ptr<Demo>(new Demo00));
 	demos.push_back(unique_ptr<Demo>(new Demo01));
 
 	for (auto & p : demos)
-		p->Prepare();
+		p->Prepare(win);
 
 	choose_demo(GLFW_KEY_0); //select demo 0
 }
@@ -61,6 +61,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		choose_demo(key);
 }
 
+void window_size_callback(GLFWwindow* window, int width, int height)
+{
+	demos[curr_demo]->ResizeWindow(width, height);
+}
+
 extern const int nWinWidth = 1024;
 extern const int nWinHeight = 768;
 
@@ -83,8 +88,9 @@ int main()
 		glewEnv glew;
 
 		glfwSetKeyCallback(window, key_callback);
+		glfwSetWindowSizeCallback(window, window_size_callback);
 
-		prepare();
+		prepare(window);
 
 		glClearColor(0.0f, 0.0f, 0.2f, 0.0f);
 

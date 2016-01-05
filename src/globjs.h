@@ -58,6 +58,12 @@ public:
 	const std::string filename;
 };
 
+class TgaFormatError : public MyExcept
+{
+public:
+	TgaFormatError(const std::string& fname) : filename(fname) {}
+	const std::string filename;
+};
 
 class glfwEnv
 {

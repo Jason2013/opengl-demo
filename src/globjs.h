@@ -138,7 +138,11 @@ public:
 		rhs.id = 0;
 		return *this;
 	}
-	TextureObj() { glGenTextures(1, &id); }
+	TextureObj(bool immediate = true)
+	{
+		if (immediate)
+			glGenTextures(1, &id);
+	}
 	~TextureObj() { clean(); }
 	operator GLuint() { return id; }
 private:
@@ -147,7 +151,7 @@ private:
 		if (id)
 			glDeleteTextures(1, &id);
 	}
-	GLuint id;
+	GLuint id = 0;
 };
 
 class ShaderObj

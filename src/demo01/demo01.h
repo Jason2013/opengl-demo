@@ -13,7 +13,7 @@
 class Demo01 : public Demo
 {
 public:
-	Demo01() :vao(false) {}
+	Demo01() :vao(false), Texture(false) {}
 	virtual void Active() override;
 	virtual void Time(double time) override;
 	virtual void Prepare();

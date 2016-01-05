@@ -29,7 +29,12 @@ using std::unique_ptr;
 vector<unique_ptr<Demo>> demos;
 unsigned int curr_demo = 0xffff;
 
-void choose_demo(int);
+inline unique_ptr<Demo>& ActiveDemo()
+{
+	return demos[curr_demo];
+}
+
+bool choose_demo(int);
 
 void prepare(GLFWwindow * win)
 {
@@ -37,32 +42,39 @@ void prepare(GLFWwindow * win)
 	demos.push_back(unique_ptr<Demo>(new Demo01(win)));
 	demos.push_back(unique_ptr<Demo>(new Demo02(win)));
 
-	choose_demo(GLFW_KEY_0); //select demo 0
+	choose_demo(GLFW_KEY_2); //select demo 0
 }
 
-void choose_demo(int key)
+bool choose_demo(int key)
 {
 	if (key < GLFW_KEY_0 || (key - GLFW_KEY_0) >= (int)demos.size())
-		return;
+		return false;
 	unsigned int new_demo = key - GLFW_KEY_0;
 	if (new_demo != curr_demo)
 	{
 		curr_demo = new_demo;
-		demos[curr_demo]->Active();
+		ActiveDemo()->Active();
 	}
+	return true;
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+	{
 		glfwSetWindowShouldClose(window, GL_TRUE);
-	else
-		choose_demo(key);
+		return;
+	}
+	
+	if (choose_demo(key))
+		return;
+
+	ActiveDemo()->Key(key); // let active demo to process the key event
 }
 
 void window_size_callback(GLFWwindow* window, int width, int height)
 {
-	demos[curr_demo]->ResizeWindow(width, height);
+	ActiveDemo()->ResizeWindow(width, height);
 }
 
 extern const int nWinWidth = 1024;
@@ -95,8 +107,8 @@ int main()
 
 		while (!glfwWindowShouldClose(window))
 		{
-			demos[curr_demo]->Time(glfwGetTime());
-			demos[curr_demo]->Draw();
+			ActiveDemo()->Time(glfwGetTime());
+			ActiveDemo()->Draw();
 
 			glfwSwapBuffers(window);
 			glfwPollEvents();

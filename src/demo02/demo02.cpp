@@ -21,6 +21,12 @@ void Demo02::ResizeWindow(int width, int height)
 	ProjectionMatrix = glm::perspective(45.0f, (float)width / (float)height, 0.1f, 100.0f);
 }
 
+bool Demo02::Key(int key)
+{
+	cout << "key = " << key << endl;
+	return true;
+}
+
 void Demo02::Prepare()
 {
 	// Create and compile our GLSL program from the shaders

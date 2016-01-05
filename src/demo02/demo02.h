@@ -19,6 +19,7 @@ public:
 	virtual void Prepare() override;
 	virtual void Draw();
 	virtual void ResizeWindow(int width, int height) override;
+	virtual bool Key(int key) override;
 
 
 private:

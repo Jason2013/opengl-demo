@@ -17,7 +17,7 @@ public:
 		}
 	}
 	virtual void ResizeWindow(int width, int height) { glViewport(0, 0, width, height); }
-	virtual void Key(int key) {}
+	virtual bool Key(int key) { return false; }
 	virtual void Prepare() {};
 	virtual void Draw() {};
 	virtual void Finalize() {};

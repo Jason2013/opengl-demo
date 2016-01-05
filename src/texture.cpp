@@ -1,9 +1,13 @@
+#include "texture.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <cassert>
 
 #include <GL/glew.h>
 #include <memory>
+using std::unique_ptr;
+
 #include <string>
 #include <GLFW/glfw3.h>
 #include "globjs.h"
@@ -27,21 +31,16 @@ GLuint loadBMP_custom(const char * imagepath){
 	{
 		throw FileNotFound(imagepath);
 	}
-	//{printf("%s could not be opened. Are you in the right directory ? Don't forget to read the FAQ !\n", imagepath); getchar(); return 0;}
 
 	// Read the header, i.e. the 54 first bytes
 
 	// If less than 54 bytes are read, problem
 	if ( fread(header, 1, 54, file)!=54 ){ 
 		throw BmpFormatError(imagepath);
-		//printf("Not a correct BMP file\n");
-		//return 0;
 	}
 	// A BMP files always begins with "BM"
 	if ( header[0]!='B' || header[1]!='M' ){
 		throw BmpFormatError(imagepath);
-		//printf("Not a correct BMP file\n");
-		//return 0;
 	}
 	// Make sure this is a 24bpp file
 	if ( *(int*)&(header[0x1E])!=0  )
@@ -49,7 +48,6 @@ GLuint loadBMP_custom(const char * imagepath){
 	//{printf("Not a correct BMP file\n");    return 0;}
 	if ( *(int*)&(header[0x1C])!=24 )
 		throw BmpFormatError(imagepath);
-	//{printf("Not a correct BMP file\n");    return 0;}
 
 	// Read the information about the image
 	dataPos    = *(int*)&(header[0x0A]);
@@ -98,33 +96,6 @@ GLuint loadBMP_custom(const char * imagepath){
 	return textureID;
 }
 
-// Since GLFW 3, glfwLoadTexture2D() has been removed. You have to use another texture loading library, 
-// or do it yourself (just like loadBMP_custom and loadDDS)
-//GLuint loadTGA_glfw(const char * imagepath){
-//
-//	// Create one OpenGL texture
-//	GLuint textureID;
-//	glGenTextures(1, &textureID);
-//
-//	// "Bind" the newly created texture : all future texture functions will modify this texture
-//	glBindTexture(GL_TEXTURE_2D, textureID);
-//
-//	// Read the file, call glTexImage2D with the right parameters
-//	glfwLoadTexture2D(imagepath, 0);
-//
-//	// Nice trilinear filtering.
-//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
-//	glGenerateMipmap(GL_TEXTURE_2D);
-//
-//	// Return the ID of the texture we just created
-//	return textureID;
-//}
-
-
-
 #define FOURCC_DXT1 0x31545844 // Equivalent to "DXT1" in ASCII
 #define FOURCC_DXT3 0x33545844 // Equivalent to "DXT3" in ASCII
 #define FOURCC_DXT5 0x35545844 // Equivalent to "DXT5" in ASCII
@@ -139,23 +110,17 @@ TextureObj loadDDS(const char * imagepath){
 	fp = fopen(imagepath, "rb"); 
 	if (fp == NULL){
 		throw FileNotFound(imagepath);
-
-		//printf("%s could not be opened. Are you in the right directory ? Don't forget to read the FAQ !\n", imagepath); getchar(); 
-		//return 0;
 	}
-   
-	/* verify the type of file */ 
-	char filecode[4]; 
-	fread(filecode, 1, 4, fp); 
-	if (strncmp(filecode, "DDS ", 4) != 0) { 
+
+	/* verify the type of file */
+	char filecode[4];
+	fread(filecode, 1, 4, fp);
+	if (strncmp(filecode, "DDS ", 4) != 0) {
 		throw DdsFormatError(imagepath);
-		//fclose(fp); 
-
-		//return 0; 
 	}
-	
-	/* get the surface desc */ 
-	fread(&header, 124, 1, fp); 
+
+	/* get the surface desc */
+	fread(&header, 124, 1, fp);
 
 	unsigned int height      = *(unsigned int*)&(header[8 ]);
 	unsigned int width	     = *(unsigned int*)&(header[12]);
@@ -195,8 +160,6 @@ TextureObj loadDDS(const char * imagepath){
 		break; 
 	default: 
 		throw DdsFormatError(imagepath);
-		//free(buffer); 
-		//return 0; 
 	}
 
 	// Create one OpenGL texture
@@ -231,4 +194,159 @@ TextureObj loadDDS(const char * imagepath){
 	return textureID;
 
 
+}
+
+// Define targa header. This is only used locally.
+#pragma pack(1)
+typedef struct
+{
+	GLbyte	identsize;              // Size of ID field that follows header (0)
+	GLbyte	colorMapType;           // 0 = None, 1 = paletted
+	GLbyte	imageType;              // 0 = none, 1 = indexed, 2 = rgb, 3 = grey, +8=rle
+	unsigned short	colorMapStart;          // First colour map entry
+	unsigned short	colorMapLength;         // Number of colors
+	unsigned char 	colorMapBits;   // bits per palette entry
+	unsigned short	xstart;                 // image x origin
+	unsigned short	ystart;                 // image y origin
+	unsigned short	width;                  // width in pixels
+	unsigned short	height;                 // height in pixels
+	GLbyte	bits;                   // bits per pixel (8 16, 24, 32)
+	GLbyte	descriptor;             // image descriptor
+} TGAHEADER;
+#pragma pack(8)
+
+//#include "l1.txt"
+//#include "l2.txt"
+
+////////////////////////////////////////////////////////////////////
+// Allocate memory and load targa bits. Returns pointer to new buffer,
+// height, and width of texture, and the OpenGL format of data.
+// Call free() on buffer when finished!
+// This only works on pretty vanilla targas... 8, 24, or 32 bit color
+// only, no palettes, no RLE encoding.
+// This function also takes an optional final parameter to preallocated 
+// storage for loading in the image data.
+unique_ptr<unsigned char[]> ReadTGABits(const char *szFileName, GLint *iWidth, GLint *iHeight, GLint *iComponents, GLenum *eFormat, GLbyte *pData = NULL)
+{
+	FILE *pFile;			// File pointer
+	TGAHEADER tgaHeader;		// TGA file header
+	unsigned long lImageSize;		// Size in bytes of image
+	short sDepth;			// Pixel depth;
+	unique_ptr<unsigned char[]> pBits(NULL);          // Pointer to bits
+
+									// Default/Failed values
+	*iWidth = 0;
+	*iHeight = 0;
+	*eFormat = GL_RGB;
+	*iComponents = GL_RGB;
+
+	// Attempt to open the file
+	pFile = fopen(szFileName, "rb");
+	if (pFile == NULL)
+	{
+		throw FileNotFound(szFileName);
+	}
+
+	// Read in header (binary)
+	fread(&tgaHeader, 18/* sizeof(TGAHEADER)*/, 1, pFile);
+
+	// Get width, height, and depth of texture
+	*iWidth = tgaHeader.width;
+	*iHeight = tgaHeader.height;
+	sDepth = tgaHeader.bits / 8;
+
+	// Put some validity checks here. Very simply, I only understand
+	// or care about 8, 24, or 32 bit targa's.
+	if (tgaHeader.bits != 8 && tgaHeader.bits != 24 && tgaHeader.bits != 32)
+		throw TgaFormatError(szFileName);
+
+	// Calculate size of image buffer
+	lImageSize = tgaHeader.width * tgaHeader.height * sDepth;
+
+	// Allocate memory and check for success
+	if (pData == NULL)
+		//pBits = (GLbyte*)malloc(lImageSize * sizeof(GLbyte));
+		pBits.reset(new unsigned char[lImageSize * sizeof(GLbyte)]);// = unique_ptr
+	else
+		pBits.reset((unsigned char *)pData);
+
+	// Read in the bits
+	// Check for read error. This should catch RLE or other 
+	// weird formats that I don't want to recognize
+	if (fread((void *)&pBits[0], lImageSize, 1, pFile) != 1)
+	{
+		//if (pBits != NULL)
+		//	free(pBits);
+		return NULL;
+	}
+
+	// Set OpenGL format expected
+	switch (sDepth)
+	{
+#ifndef OPENGL_ES
+	case 3:     // Most likely case
+		*eFormat = GL_BGR;
+		*iComponents = GL_RGB;
+		break;
+#endif
+	case 4:
+		*eFormat = GL_BGRA;
+		*iComponents = GL_RGBA;
+		break;
+	case 1:
+		*eFormat = GL_LUMINANCE;
+		*iComponents = GL_LUMINANCE;
+		break;
+	default:        // RGB
+					// If on the iPhone, TGA's are BGR, and the iPhone does not 
+					// support BGR without alpha, but it does support RGB,
+					// so a simple swizzle of the red and blue bytes will suffice.
+					// For faster iPhone loads however, save your TGA's with an Alpha!
+
+		break;
+	}
+
+	// Done with File
+	fclose(pFile);
+
+	// Return pointer to image data
+	return pBits;
+}
+
+
+// Load a TGA as a 2D Texture. Completely initialize the state
+TextureObj LoadTGATexture(const char *szFileName)
+{
+	unique_ptr<unsigned char[]> pBits;
+	int nWidth, nHeight, nComponents;
+	GLenum eFormat;
+
+	// Read the texture bits
+	pBits = ReadTGABits(szFileName, &nWidth, &nHeight, &nComponents, &eFormat);
+
+	assert(pBits);
+	if (pBits == NULL)
+		return false;
+
+	// Create one OpenGL texture
+	TextureObj textureID;
+	//glBindTexture(GL_TEXTURE_2D, textureID);
+
+	// "Bind" the newly created texture : all future texture functions will modify this texture
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glTexImage2D(GL_TEXTURE_2D, 0, nComponents, nWidth, nHeight, 0,
+		eFormat, GL_UNSIGNED_BYTE, (void *)&pBits[0]);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	//free(pBits);
+
+	return textureID;
 }

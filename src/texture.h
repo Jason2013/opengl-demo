@@ -2,6 +2,7 @@
 #define TEXTURE_HPP
 
 #include "globjs.h"
+
 // Load a .BMP file using our custom loader
 GLuint loadBMP_custom(const char * imagepath);
 
@@ -13,5 +14,6 @@ GLuint loadBMP_custom(const char * imagepath);
 // Load a .DDS file using GLFW's own loader
 TextureObj loadDDS(const char * imagepath);
 
+TextureObj LoadTGATexture(const char *szFileName);
 
 #endif

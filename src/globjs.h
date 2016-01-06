@@ -83,6 +83,7 @@ class glewEnv
 public:
 	glewEnv()
 	{
+		glewExperimental = GL_TRUE;
 		if (glewInit() != GLEW_OK)
 			throw glewEnvInitExcept();
 	}

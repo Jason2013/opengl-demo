@@ -63,6 +63,7 @@ private:
 	BufferObj vertexbuffer, uvbuffer, normalbuffer;
 
 	std::string caption = "OBJ model";
+	std::string mode = "Texture";
 };
 
 #endif

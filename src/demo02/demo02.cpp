@@ -81,8 +81,6 @@ void Demo02::Prepare()
 
 	MakeSphere(1.0f, 52, 26, vertices, uvs, normals);
 
-
-
 	ProjectionMatrix = glm::perspective(45.0f, (float)nWinWidth / (float)nWinHeight, 0.1f, 100.0f);
 	ViewMatrix = glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
 	ModelMatrix = glm::translate(glm::mat4(1.0), glm::vec3(0, 0, -4));
@@ -175,7 +173,7 @@ void Demo02::Prepare()
 
 void Demo02::Time(double time)
 {
-	float angle = (float)(time)* (3.1415926f / 180.f)*30.0f;
+	float angle = (float)(time)* (3.1415926f / 180.f)* 10.0f;
 
 	glm::mat4x4 RotateMatrix = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::mat4x4 TranslateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -4.0f));

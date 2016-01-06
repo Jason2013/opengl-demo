@@ -21,7 +21,7 @@ void Demo01::ResizeWindow(int width, int height)
 void Demo01::OnLightPosChanged(const vec3& lightPos)
 {
 	char buf[100];
-	sprintf(buf, "%s - light position: (%.1f,%.1f,%.1f)", caption.c_str(), lightPos.x, lightPos.y, lightPos.z);
+	sprintf(buf, "%s - %s - light position: (%.1f,%.1f,%.1f)", caption.c_str(), mode.c_str(), lightPos.x, lightPos.y, lightPos.z);
 
 	glfwSetWindowTitle(Window(), buf);
 	glUniform3fv(ActiveProgram().GetUniformLocation("LightPosition_worldspace"), 1, &vEyeLight[0]);
@@ -34,22 +34,19 @@ bool Demo01::Key(int key)
 	switch (key)
 	{
 	case GLFW_KEY_A:
-		//vEyeLight.x -= step;
 		SetActiveProgram(program);
 		glUseProgram(ActiveProgram());
+		mode = "Texture";
 		break;
 	case GLFW_KEY_B:
-		//vEyeLight.x -= step;
 		SetActiveProgram(program3);
 		glUseProgram(ActiveProgram());
+		mode = "Gouraud";
 		break;
 	case GLFW_KEY_C:
-		//vEyeLight.x -= step;
 		SetActiveProgram(program2);
 		glUseProgram(ActiveProgram());
-		//glUniform3fv(ActiveProgram().GetUniformLocation("LightPosition_worldspace"), 1, &vEyeLight[0]);
-
-		//gluni ActiveProgram().GetUniformLocation("LightPosition_worldspace");
+		mode = "Phong";
 		break;
 	case GLFW_KEY_LEFT:
 		vEyeLight.x -= step;
@@ -90,8 +87,6 @@ void Demo01::Prepare()
 	{ GL_FRAGMENT_SHADER, "shaders/demo01/StandardShadingGouraud.fragmentshader" } };
 	program3 = LoadShaders(shader_infos3);
 
-	//program = std::move(program2);
-
 	// Load the texture
 	glActiveTexture(GL_TEXTURE0);
 	Texture = loadDDS("models/demo01/uvmap.DDS");
@@ -104,7 +99,6 @@ void Demo01::Prepare()
 	ModelMatrix = glm::translate(glm::mat4(1.0), glm::vec3(0, 0, -4));
 
 	// Load it into a VBO
-
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
@@ -156,7 +150,7 @@ void Demo01::Prepare()
 
 void Demo01::Time(double time)
 {
-	float angle = (float)(time)* (3.1415926f / 180.f)*30.0f;// / 12.0f;
+	float angle = (float)(time)* (3.1415926f / 180.f)* 10.0f;
 
 	glm::mat4x4 RotateMatrix = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 1.0f, 0.0f));
 
@@ -167,7 +161,6 @@ void Demo01::Time(double time)
 	glUniformMatrix4fv(ActiveProgram().GetUniformLocation("MV"), 1, GL_FALSE, &(MV())[0][0]);
 	glUniformMatrix3fv(ActiveProgram().GetUniformLocation("MN"), 1, GL_FALSE, &(mat3(RotateMatrix))[0][0]);
 	glUniform3fv(ActiveProgram().GetUniformLocation("LightPosition_worldspace"), 1, &vEyeLight[0]);
-
 }
 
 void Demo01::SetActiveProgram(ProgramObj& prog)
@@ -184,7 +177,9 @@ void Demo01::Active()
 {
 	Demo::Active();
 
-	glfwSetWindowTitle(Window(), "OBJ Model: suzanne");
+	char buff[100];
+	sprintf(buff, "%s - %s", caption.c_str(), mode.c_str());
+	glfwSetWindowTitle(Window(), buff);
 	SetActiveProgram(program);
 	glUseProgram(ActiveProgram());
 	glBindVertexArray(vao);
@@ -193,8 +188,6 @@ void Demo01::Active()
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, Texture);
 	glUniform1i(ActiveProgram().GetUniformLocation("myTextureSampler"), 0);
-
-
 }
 
 void Demo01::Draw()

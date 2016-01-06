@@ -66,7 +66,6 @@ private:
 	GLint locNormalMap;
 
 	std::string caption = "Normal map";
-
 };
 
 #endif

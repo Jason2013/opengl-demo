@@ -4,6 +4,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <string>
+#include <map>
+#include <cassert>
 #include <iostream>
 
 void err_hander(const std::string&);
@@ -209,12 +211,14 @@ public:
 	{
 		this->prog_id = rhs.prog_id;
 		rhs.prog_id = 0;
+		uniforms = std::move(rhs.uniforms);
 	}
 	ProgramObj& operator=(ProgramObj && rhs)
 	{
 		clean();
 		this->prog_id = rhs.prog_id;
 		rhs.prog_id = 0;
+		uniforms = std::move(rhs.uniforms);
 		return *this;
 	}
 	~ProgramObj() { clean(); }
@@ -224,7 +228,22 @@ public:
 		glAttachShader(prog_id, shader);
 		shader.prog_id = prog_id;
 	}
+	int GetUniformLocation(std::string name)
+	{
+		auto uniform = uniforms.find(name);
+		int loc = -1;
+		if (uniform == uniforms.end())
+		{
+			loc = glGetUniformLocation(prog_id, name.c_str());
+			assert(loc != -1);
+			uniforms.insert(make_pair(name, loc));
+			return loc;
+		}
+		loc = uniform->second;
+		return loc;
+	}
 private:
+	std::map<std::string, int> uniforms;
 	void clean()
 	{
 		if (prog_id)

@@ -21,6 +21,11 @@ public:
 	virtual void Draw();
 	virtual void ResizeWindow(int width, int height) override;
 
+protected:
+	glm::mat4 M() { return ModelMatrix; }
+	glm::mat4 V() { return ViewMatrix; }
+	glm::mat4 MV() { return ViewMatrix * ModelMatrix; };
+	glm::mat4 MVP() { return ProjectionMatrix * ViewMatrix * ModelMatrix; };
 
 private:
 	ProgramObj program;
@@ -32,18 +37,15 @@ private:
 	std::vector<glm::vec2> uvs;
 	std::vector<glm::vec3> normals; // Won't be used at the moment.
 
-	GLuint MatrixID;
-
 	// Load the texture
 	TextureObj Texture;
 
 	// Get a handle for our "myTextureSampler" uniform
 	GLuint TextureID;
 
-	glm::mat4 ProjectionMatrix;
-	glm::mat4 ViewMatrix;
 	glm::mat4 ModelMatrix;
-	glm::mat4 MVP;
+	glm::mat4 ViewMatrix;
+	glm::mat4 ProjectionMatrix;
 
 	//GLuint vertexbuffer;
 	BufferObj vertexbuffer, uvbuffer;

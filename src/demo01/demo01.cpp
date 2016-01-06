@@ -18,6 +18,15 @@ void Demo01::ResizeWindow(int width, int height)
 	ProjectionMatrix = glm::perspective(45.0f, (float)width / (float)height, 0.1f, 100.0f);
 }
 
+void Demo01::OnLightPosChanged(const vec3& lightPos)
+{
+	char buf[100];
+	sprintf(buf, "%s - light position: (%.1f,%.1f,%.1f)", caption.c_str(), lightPos.x, lightPos.y, lightPos.z);
+
+	glfwSetWindowTitle(Window(), buf);
+	glUniform3fv(ActiveProgram().GetUniformLocation("LightPosition_worldspace"), 1, &vEyeLight[0]);
+}
+
 bool Demo01::Key(int key)
 {
 	float step = 0.5f;
@@ -42,21 +51,24 @@ bool Demo01::Key(int key)
 
 		//gluni ActiveProgram().GetUniformLocation("LightPosition_worldspace");
 		break;
-	//case GLFW_KEY_RIGHT:
-	//	vEyeLight.x += step;
-	//	break;
-	//case GLFW_KEY_UP:
-	//	vEyeLight.y += step;
-	//	break;
-	//case GLFW_KEY_DOWN:
-	//	vEyeLight.y -= step;
-	//	break;
+	case GLFW_KEY_LEFT:
+		vEyeLight.x -= step;
+		break;	
+	case GLFW_KEY_RIGHT:
+		vEyeLight.x += step;
+		break;
+	case GLFW_KEY_UP:
+		vEyeLight.y += step;
+		break;
+	case GLFW_KEY_DOWN:
+		vEyeLight.y -= step;
+		break;
 	default:
 		// ignore the key
 		return false;
 	}
-	//vEyeLight = glm::clamp(vEyeLight, vec3(-10.0f, -10.0f, 0.0f), vec3(10.0f, 10.0f, 2.0f));
-	//OnLightPosChanged(vEyeLight);
+	vEyeLight = glm::clamp(vEyeLight, vec3(-10.0f, -10.0f, 0.0f), vec3(10.0f, 10.0f, 2.0f));
+	OnLightPosChanged(vEyeLight);
 
 	// has processed
 	return true;

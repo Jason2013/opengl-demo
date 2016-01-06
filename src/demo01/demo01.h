@@ -29,7 +29,7 @@ protected:
 	glm::mat4 MVP() { return ProjectionMatrix * ViewMatrix * ModelMatrix; };
 	void SetActiveProgram(ProgramObj&);
 	ProgramObj& ActiveProgram();
-
+	void OnLightPosChanged(const glm::vec3& lightPos);
 
 private:
 	ProgramObj * active_program;
@@ -61,6 +61,8 @@ private:
 
 	//GLuint vertexbuffer;
 	BufferObj vertexbuffer, uvbuffer, normalbuffer;
+
+	std::string caption = "OBJ model";
 };
 
 #endif

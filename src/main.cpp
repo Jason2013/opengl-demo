@@ -65,11 +65,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		glfwSetWindowShouldClose(window, GL_TRUE);
 		return;
 	}
-	
-	if (choose_demo(key))
-		return;
 
-	ActiveDemo()->Key(key); // let active demo to process the key event
+	if (action == GLFW_PRESS || action == GLFW_REPEAT)
+	{
+		if (choose_demo(key))
+			return;
+
+		ActiveDemo()->Key(key); // let active demo to process the key event
+	}
 }
 
 void window_size_callback(GLFWwindow* window, int width, int height)

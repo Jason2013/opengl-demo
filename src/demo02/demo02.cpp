@@ -23,7 +23,29 @@ void Demo02::ResizeWindow(int width, int height)
 
 bool Demo02::Key(int key)
 {
-	cout << "key = " << key << endl;
+	float step = 0.5f;
+
+	switch (key)
+	{
+	case GLFW_KEY_LEFT:
+		vEyeLight.x -= step;
+		break;
+	case GLFW_KEY_RIGHT:
+		vEyeLight.x += step;
+		break;
+	case GLFW_KEY_UP:
+		vEyeLight.y += step;
+		break;
+	case GLFW_KEY_DOWN:
+		vEyeLight.y -= step;
+		break;
+	default:
+		// ignore the key
+		return false;
+	}
+	vEyeLight = glm::clamp(vEyeLight, vec3(-10.0f, -10.0f, 0.0f), vec3(10.0f, 10.0f, 2.0f));
+
+	// has processed
 	return true;
 }
 
@@ -142,7 +164,7 @@ void Demo02::Prepare()
 
 void Demo02::Time(double time)
 {
-	float angle = (float)(time)* (3.1415926f / 180.f)*30.0f;// / 12.0f;
+	float angle = (float)(time)* (3.1415926f / 180.f)*30.0f;
 
 	glm::mat4x4 RotateMatrix = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::mat4x4 TranslateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -4.0f));
@@ -157,19 +179,9 @@ void Demo02::Time(double time)
 	glUniformMatrix4fv(locMV, 1, GL_FALSE, &MVMatrix[0][0]);
 	glUniformMatrix3fv(locNM, 1, GL_FALSE, &NormalMatrix[0][0]);
 
-	//GLfloat vEyeLight[] = { -100.0f, 100.0f, 150.0f };
-	//GLfloat vEyeLight[] = { -100.0f, 0.0f, 0.0f };
-	GLfloat vEyeLight[] = { -100.0f, 100.0f, 150.0f };
-	GLfloat vAmbientColor[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-	GLfloat vDiffuseColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-
-	//GL_INVALID_VALUE
-	glUniform4fv(locAmbient, 1, vAmbientColor);
-	glUniform4fv(locDiffuse, 1, vDiffuseColor);
-	glUniform3fv(locLight, 1, vEyeLight);
-
-	//glUniform3fv(locLight, 1, vEyeLight);
+	glUniform4fv(locAmbient, 1, &vAmbientColor[0]);
+	glUniform4fv(locDiffuse, 1, &vDiffuseColor[0]);
+	glUniform3fv(locLight, 1, &vEyeLight[0]);
 }
 
 void Demo02::Active()
@@ -188,9 +200,6 @@ void Demo02::Active()
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, Texture2);
 	glUniform1i(locNormalMap, 1);
-
-	GLfloat vEyeLight[] = { -2.0f, 2.0f, 3.0f };
-	glUniform3fv(locLight, 1, vEyeLight);
 }
 
 void Demo02::Draw()

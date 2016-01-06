@@ -35,6 +35,7 @@ private:
 	ProgramObj * active_program;
 	ProgramObj program;
 	ProgramObj program2;
+	ProgramObj program3;
 	VertexArrayObj vao;
 	GLuint texture;
 
@@ -59,7 +60,7 @@ private:
 	glm::mat4 ProjectionMatrix;
 
 	//GLuint vertexbuffer;
-	BufferObj vertexbuffer, uvbuffer;
+	BufferObj vertexbuffer, uvbuffer, normalbuffer;
 };
 
 #endif

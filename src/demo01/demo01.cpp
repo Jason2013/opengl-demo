@@ -31,9 +31,14 @@ bool Demo01::Key(int key)
 		break;
 	case GLFW_KEY_B:
 		//vEyeLight.x -= step;
+		SetActiveProgram(program3);
+		glUseProgram(ActiveProgram());
+		break;
+	case GLFW_KEY_C:
+		//vEyeLight.x -= step;
 		SetActiveProgram(program2);
 		glUseProgram(ActiveProgram());
-		glUniform3fv(ActiveProgram().GetUniformLocation("LightPosition_worldspace"), 1, &vEyeLight[0]);
+		//glUniform3fv(ActiveProgram().GetUniformLocation("LightPosition_worldspace"), 1, &vEyeLight[0]);
 
 		//gluni ActiveProgram().GetUniformLocation("LightPosition_worldspace");
 		break;
@@ -68,6 +73,11 @@ void Demo01::Prepare()
 	vector<shader_info> shader_infos2 = { { GL_VERTEX_SHADER, "shaders/demo01/StandardShading.vertexshader" },
 	{ GL_FRAGMENT_SHADER, "shaders/demo01/StandardShading.fragmentshader" } };
 	program2 = LoadShaders(shader_infos2);
+
+	vector<shader_info> shader_infos3 = { { GL_VERTEX_SHADER, "shaders/demo01/StandardShadingGouraud.vertexshader" },
+	{ GL_FRAGMENT_SHADER, "shaders/demo01/StandardShadingGouraud.fragmentshader" } };
+	program3 = LoadShaders(shader_infos3);
+
 	//program = std::move(program2);
 
 	// Load the texture
@@ -76,8 +86,6 @@ void Demo01::Prepare()
 
 	// Read our .obj file
 	loadOBJ("models/demo01/suzanne.obj", vertices, uvs, normals);
-
-	//glUseProgram(program);
 
 	ProjectionMatrix = glm::perspective(45.0f, (float)nWinWidth / (float)nWinHeight, 0.1f, 100.0f);
 	ViewMatrix = glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
@@ -91,6 +99,9 @@ void Demo01::Prepare()
 
 	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
 	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals[0], GL_STATIC_DRAW);
 
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
@@ -116,6 +127,18 @@ void Demo01::Prepare()
 		(void*)0                          // array buffer offset
 		);
 
+	// 3nd attribute buffer : Normals
+	glEnableVertexAttribArray(2);
+	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+	glVertexAttribPointer(
+		2,                                // attribute
+		3,                                // size
+		GL_FLOAT,                         // type
+		GL_FALSE,                         // normalized?
+		0,                                // stride
+		(void*)0                          // array buffer offset
+		);
+
 	glBindVertexArray(0);
 }
 
@@ -127,6 +150,12 @@ void Demo01::Time(double time)
 
 	ModelMatrix = glm::translate(glm::mat4(1.0), glm::vec3(0, 0, -4)) * RotateMatrix;
 	glUniformMatrix4fv(ActiveProgram().GetUniformLocation("MVP"), 1, GL_FALSE, &(MVP())[0][0]);
+	glUniformMatrix4fv(ActiveProgram().GetUniformLocation("M"), 1, GL_FALSE, &(M())[0][0]);
+	glUniformMatrix4fv(ActiveProgram().GetUniformLocation("V"), 1, GL_FALSE, &(V())[0][0]);
+	glUniformMatrix4fv(ActiveProgram().GetUniformLocation("MV"), 1, GL_FALSE, &(MV())[0][0]);
+	glUniformMatrix3fv(ActiveProgram().GetUniformLocation("MN"), 1, GL_FALSE, &(mat3(RotateMatrix))[0][0]);
+	glUniform3fv(ActiveProgram().GetUniformLocation("LightPosition_worldspace"), 1, &vEyeLight[0]);
+
 }
 
 void Demo01::SetActiveProgram(ProgramObj& prog)

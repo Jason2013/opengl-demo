@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
+#include <string>
 
 #include "demo.h"
 #include "globjs.h"
@@ -23,6 +24,8 @@ public:
 
 
 private:
+    void OnLightPosChanged(const glm::vec3&);
+
 	ProgramObj program;
 	VertexArrayObj vao;
 	GLuint texture;
@@ -45,7 +48,7 @@ private:
 	glm::mat3 NormalMatrix;
 	glm::mat4 MVP;
 
-	glm::vec3 vEyeLight = { -100.0f, 100.0f, 150.0f };
+	glm::vec3 vEyeLight = { -5.0f, 5.0f, 1.0f };
 	glm::vec4 vAmbientColor = { 0.2f, 0.2f, 0.2f, 1.0f };
 	glm::vec4 vDiffuseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
@@ -61,6 +64,8 @@ private:
 	GLint locNM;
 	GLint locColorMap;
 	GLint locNormalMap;
+
+	std::string caption = "Normal map";
 
 };
 

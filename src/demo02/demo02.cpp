@@ -8,7 +8,8 @@
 #include <vector>
 using std::vector;
 using namespace glm;
-
+#include <string>
+using namespace std;
 #include "texture.h"
 #include "sphere.h"
 
@@ -19,6 +20,15 @@ void Demo02::ResizeWindow(int width, int height)
 {
 	Demo::ResizeWindow(width, height);
 	ProjectionMatrix = glm::perspective(45.0f, (float)width / (float)height, 0.1f, 100.0f);
+}
+
+void Demo02::OnLightPosChanged(const vec3& lightPos)
+{
+	char buf[100];
+	sprintf(buf, "%s - light position: (%.1f,%.1f,%.1f)", caption.c_str(), lightPos.x, lightPos.y, lightPos.z);
+
+	glfwSetWindowTitle(Window(), buf);
+	glUniform3fv(locLight, 1, &vEyeLight[0]);
 }
 
 bool Demo02::Key(int key)
@@ -44,6 +54,7 @@ bool Demo02::Key(int key)
 		return false;
 	}
 	vEyeLight = glm::clamp(vEyeLight, vec3(-10.0f, -10.0f, 0.0f), vec3(10.0f, 10.0f, 2.0f));
+	OnLightPosChanged(vEyeLight);
 
 	// has processed
 	return true;
@@ -181,14 +192,13 @@ void Demo02::Time(double time)
 
 	glUniform4fv(locAmbient, 1, &vAmbientColor[0]);
 	glUniform4fv(locDiffuse, 1, &vDiffuseColor[0]);
-	glUniform3fv(locLight, 1, &vEyeLight[0]);
 }
 
 void Demo02::Active()
 {
 	Demo::Active();
 
-	glfwSetWindowTitle(Window(), "OBJ Model: suzanne 2");
+	glfwSetWindowTitle(Window(), caption.c_str());
 	glUseProgram(program);
 	glBindVertexArray(vao);
 	glEnable(GL_DEPTH_TEST);
@@ -200,6 +210,8 @@ void Demo02::Active()
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, Texture2);
 	glUniform1i(locNormalMap, 1);
+
+	OnLightPosChanged(vEyeLight);
 }
 
 void Demo02::Draw()

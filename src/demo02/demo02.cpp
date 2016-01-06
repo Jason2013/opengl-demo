@@ -28,7 +28,7 @@ void Demo02::OnLightPosChanged(const vec3& lightPos)
 	sprintf(buf, "%s - light position: (%.1f,%.1f,%.1f)", caption.c_str(), lightPos.x, lightPos.y, lightPos.z);
 
 	glfwSetWindowTitle(Window(), buf);
-	glUniform3fv(locLight, 1, &vEyeLight[0]);
+	glUniform3fv(program.GetUniformLocation("vLightPosition"), 1, &vEyeLight[0]);
 }
 
 bool Demo02::Key(int key)
@@ -69,10 +69,6 @@ void Demo02::Prepare()
 	program = LoadShaders(shader_infos2);
 	glUseProgram(program);
 
-	// Get a handle for our "MVP" uniform
-	locMVP = glGetUniformLocation(program, "mvpMatrix");
-	assert(locMVP != -1);
-
 	glActiveTexture(GL_TEXTURE0);
 	Texture = LoadTGATexture("models/demo02/IceMoon.tga");
 
@@ -85,7 +81,7 @@ void Demo02::Prepare()
 	ViewMatrix = glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
 	ModelMatrix = glm::translate(glm::mat4(1.0), glm::vec3(0, 0, -4));
 	MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
-	glUniformMatrix4fv(locMVP, 1, GL_FALSE, &MVP[0][0]);
+	glUniformMatrix4fv(program.GetUniformLocation("mvpMatrix"), 1, GL_FALSE, &MVP[0][0]);
 
 	// Load it into a VBO
 
@@ -137,38 +133,16 @@ void Demo02::Prepare()
 
 	glBindVertexArray(0);
 
-	locAmbient = glGetUniformLocation(program, "ambientColor");
-	assert(locAmbient != -1);
-
-	locDiffuse = glGetUniformLocation(program, "diffuseColor");
-	assert(locDiffuse != -1);
-
-	locLight = glGetUniformLocation(program, "vLightPosition");
-	assert(locLight != -1);
-	locMVP = glGetUniformLocation(program, "mvpMatrix");
-
-	locMV = glGetUniformLocation(program, "mvMatrix");
-	assert(locMV != -1);
-
-	locNM = glGetUniformLocation(program, "normalMatrix");
-	assert(locNM != -1);
-
-	locColorMap = glGetUniformLocation(program, "colorMap");
-	assert(locColorMap != -1);
-
-	locNormalMap = glGetUniformLocation(program, "normalMap");
-	assert(locNormalMap != -1);
-
-	glUniform4fv(locAmbient, 1, &vAmbientColor[0]);
-	glUniform4fv(locDiffuse, 1, &vDiffuseColor[0]);
-	glUniform3fv(locLight, 1, &vEyeLight[0]);
+	glUniform4fv(program.GetUniformLocation("ambientColor"), 1, &vAmbientColor[0]);
+	glUniform4fv(program.GetUniformLocation("diffuseColor"), 1, &vDiffuseColor[0]);
+	glUniform3fv(program.GetUniformLocation("vLightPosition"), 1, &vEyeLight[0]);
 
 	glm::mat3 nm = glm::mat3(ModelMatrix);
 
-	glUniformMatrix4fv(locMV, 1, GL_FALSE, &ModelMatrix[0][0]);
-	glUniformMatrix3fv(locNM, 1, GL_FALSE, &nm[0][0]);
-	glUniform1i(locColorMap, 0);
-	glUniform1i(locNormalMap, 1);
+	glUniformMatrix4fv(program.GetUniformLocation("mvMatrix"), 1, GL_FALSE, &ModelMatrix[0][0]);
+	glUniformMatrix3fv(program.GetUniformLocation("normalMatrix"), 1, GL_FALSE, &nm[0][0]);
+	glUniform1i(program.GetUniformLocation("colorMap"), 0);
+	glUniform1i(program.GetUniformLocation("normalMap"), 1);
 }
 
 void Demo02::Time(double time)
@@ -184,12 +158,12 @@ void Demo02::Time(double time)
 	MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 
 	NormalMatrix = mat3(ViewMatrix) * mat3(RotateMatrix);
-	glUniformMatrix4fv(locMVP, 1, GL_FALSE, &MVP[0][0]);
-	glUniformMatrix4fv(locMV, 1, GL_FALSE, &MVMatrix[0][0]);
-	glUniformMatrix3fv(locNM, 1, GL_FALSE, &NormalMatrix[0][0]);
+	glUniformMatrix4fv(program.GetUniformLocation("mvpMatrix"), 1, GL_FALSE, &MVP[0][0]);
+	glUniformMatrix4fv(program.GetUniformLocation("mvMatrix"), 1, GL_FALSE, &MVMatrix[0][0]);
+	glUniformMatrix3fv(program.GetUniformLocation("normalMatrix"), 1, GL_FALSE, &NormalMatrix[0][0]);
 
-	glUniform4fv(locAmbient, 1, &vAmbientColor[0]);
-	glUniform4fv(locDiffuse, 1, &vDiffuseColor[0]);
+	glUniform4fv(program.GetUniformLocation("ambientColor"), 1, &vAmbientColor[0]);
+	glUniform4fv(program.GetUniformLocation("diffuseColor"), 1, &vDiffuseColor[0]);
 }
 
 void Demo02::Active()
@@ -203,11 +177,11 @@ void Demo02::Active()
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, Texture);
-	glUniform1i(locColorMap, 0);
+	glUniform1i(program.GetUniformLocation("colorMap"), 0);
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, Texture2);
-	glUniform1i(locNormalMap, 1);
+	glUniform1i(program.GetUniformLocation("normalMap"), 1);
 
 	OnLightPosChanged(vEyeLight);
 }

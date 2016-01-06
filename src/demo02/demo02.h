@@ -55,16 +55,6 @@ private:
 	//GLuint vertexbuffer;
 	BufferObj vertexbuffer, normalbuffer, uvbuffer;
 
-
-	GLint locAmbient;
-	GLint locDiffuse;
-	GLint locLight;
-	GLint locMVP;
-	GLint locMV;
-	GLint locNM;
-	GLint locColorMap;
-	GLint locNormalMap;
-
 	std::string caption = "Normal map";
 };
 

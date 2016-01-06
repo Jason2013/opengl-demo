@@ -235,7 +235,7 @@ public:
 		if (uniform == uniforms.end())
 		{
 			loc = glGetUniformLocation(prog_id, name.c_str());
-			assert(loc != -1);
+			//assert(loc != -1);
 			uniforms.insert(make_pair(name, loc));
 			return loc;
 		}

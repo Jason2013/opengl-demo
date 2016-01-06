@@ -20,15 +20,21 @@ public:
 	virtual void Prepare() override;
 	virtual void Draw();
 	virtual void ResizeWindow(int width, int height) override;
+	virtual bool Demo01::Key(int key) override;
 
 protected:
 	glm::mat4 M() { return ModelMatrix; }
 	glm::mat4 V() { return ViewMatrix; }
 	glm::mat4 MV() { return ViewMatrix * ModelMatrix; };
 	glm::mat4 MVP() { return ProjectionMatrix * ViewMatrix * ModelMatrix; };
+	void SetActiveProgram(ProgramObj&);
+	ProgramObj& ActiveProgram();
+
 
 private:
+	ProgramObj * active_program;
 	ProgramObj program;
+	ProgramObj program2;
 	VertexArrayObj vao;
 	GLuint texture;
 
@@ -36,6 +42,11 @@ private:
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec2> uvs;
 	std::vector<glm::vec3> normals; // Won't be used at the moment.
+
+	glm::vec3 vEyeLight = { 4.0f, 4.0f, 4.0f };
+	glm::vec4 vAmbientColor = { 0.2f, 0.2f, 0.2f, 1.0f };
+	glm::vec4 vDiffuseColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+
 
 	// Load the texture
 	TextureObj Texture;

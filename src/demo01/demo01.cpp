@@ -18,12 +18,57 @@ void Demo01::ResizeWindow(int width, int height)
 	ProjectionMatrix = glm::perspective(45.0f, (float)width / (float)height, 0.1f, 100.0f);
 }
 
+bool Demo01::Key(int key)
+{
+	float step = 0.5f;
+
+	switch (key)
+	{
+	case GLFW_KEY_A:
+		//vEyeLight.x -= step;
+		SetActiveProgram(program);
+		glUseProgram(ActiveProgram());
+		break;
+	case GLFW_KEY_B:
+		//vEyeLight.x -= step;
+		SetActiveProgram(program2);
+		glUseProgram(ActiveProgram());
+		glUniform3fv(ActiveProgram().GetUniformLocation("LightPosition_worldspace"), 1, &vEyeLight[0]);
+
+		//gluni ActiveProgram().GetUniformLocation("LightPosition_worldspace");
+		break;
+	//case GLFW_KEY_RIGHT:
+	//	vEyeLight.x += step;
+	//	break;
+	//case GLFW_KEY_UP:
+	//	vEyeLight.y += step;
+	//	break;
+	//case GLFW_KEY_DOWN:
+	//	vEyeLight.y -= step;
+	//	break;
+	default:
+		// ignore the key
+		return false;
+	}
+	//vEyeLight = glm::clamp(vEyeLight, vec3(-10.0f, -10.0f, 0.0f), vec3(10.0f, 10.0f, 2.0f));
+	//OnLightPosChanged(vEyeLight);
+
+	// has processed
+	return true;
+}
+
+
 void Demo01::Prepare()
 {
 	// Create and compile our GLSL program from the shaders
-	vector<shader_info> shader_infos2 = { { GL_VERTEX_SHADER, "shaders/demo01/TransformVertexShader.vertexshader" },
+	vector<shader_info> shader_infos = { { GL_VERTEX_SHADER, "shaders/demo01/TransformVertexShader.vertexshader" },
 	{ GL_FRAGMENT_SHADER, "shaders/demo01/TextureFragmentShader.fragmentshader" } };
-	program = LoadShaders(shader_infos2);
+	program = LoadShaders(shader_infos);
+
+	vector<shader_info> shader_infos2 = { { GL_VERTEX_SHADER, "shaders/demo01/StandardShading.vertexshader" },
+	{ GL_FRAGMENT_SHADER, "shaders/demo01/StandardShading.fragmentshader" } };
+	program2 = LoadShaders(shader_infos2);
+	//program = std::move(program2);
 
 	// Load the texture
 	glActiveTexture(GL_TEXTURE0);
@@ -32,7 +77,7 @@ void Demo01::Prepare()
 	// Read our .obj file
 	loadOBJ("models/demo01/suzanne.obj", vertices, uvs, normals);
 
-	glUseProgram(program);
+	//glUseProgram(program);
 
 	ProjectionMatrix = glm::perspective(45.0f, (float)nWinWidth / (float)nWinHeight, 0.1f, 100.0f);
 	ViewMatrix = glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
@@ -81,21 +126,34 @@ void Demo01::Time(double time)
 	glm::mat4x4 RotateMatrix = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 1.0f, 0.0f));
 
 	ModelMatrix = glm::translate(glm::mat4(1.0), glm::vec3(0, 0, -4)) * RotateMatrix;
-	glUniformMatrix4fv(program.GetUniformLocation("MVP"), 1, GL_FALSE, &(MVP())[0][0]);
+	glUniformMatrix4fv(ActiveProgram().GetUniformLocation("MVP"), 1, GL_FALSE, &(MVP())[0][0]);
 }
+
+void Demo01::SetActiveProgram(ProgramObj& prog)
+{
+	active_program = &prog;
+}
+ProgramObj& Demo01::ActiveProgram()
+{
+	return *active_program;
+}
+
 
 void Demo01::Active()
 {
 	Demo::Active();
 
 	glfwSetWindowTitle(Window(), "OBJ Model: suzanne");
-	glUseProgram(program);
+	SetActiveProgram(program);
+	glUseProgram(ActiveProgram());
 	glBindVertexArray(vao);
 	glEnable(GL_DEPTH_TEST);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, Texture);
-	glUniform1i(program.GetUniformLocation("myTextureSampler"), 0);
+	glUniform1i(ActiveProgram().GetUniformLocation("myTextureSampler"), 0);
+
+
 }
 
 void Demo01::Draw()

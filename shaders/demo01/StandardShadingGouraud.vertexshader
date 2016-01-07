@@ -26,7 +26,7 @@ uniform vec3 LightPosition_worldspace;
 void main(){
 
 	vec3 LightColor = vec3(1,1,1);
-	float LightPower = 150.0f;
+	float LightPower = 150.0;
 
 	// Output position of the vertex, in clip space : MVP * position
 	gl_Position =  MVP * vec4(vertexPosition_modelspace,1);

@@ -42,7 +42,7 @@ void prepare(GLFWwindow * win)
 	demos.push_back(unique_ptr<Demo>(new Demo01(win)));
 	demos.push_back(unique_ptr<Demo>(new Demo02(win)));
 
-	choose_demo(GLFW_KEY_2); //select demo 0
+	choose_demo(GLFW_KEY_0); //select demo 0
 }
 
 bool choose_demo(int key)

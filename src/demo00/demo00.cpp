@@ -26,8 +26,8 @@ void Demo00::Active()
 
 void Demo00::Prepare()
 {
-	vector<shader_info> shader_infos = { { GL_VERTEX_SHADER, "shaders/demo00/SimpleVertexShader.vertexshader" },
-	{ GL_FRAGMENT_SHADER, "shaders/demo00/SimpleFragmentShader.fragmentshader" } };
+	vector<shader_info> shader_infos = { { GL_VERTEX_SHADER, "shaders/demo00/Simple.vertexshader" },
+	{ GL_FRAGMENT_SHADER, "shaders/demo00/Simple.fragmentshader" } };
 
 	program = LoadShaders(shader_infos);
 

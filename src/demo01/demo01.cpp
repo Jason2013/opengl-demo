@@ -75,12 +75,12 @@ bool Demo01::Key(int key)
 void Demo01::Prepare()
 {
 	// Create and compile our GLSL program from the shaders
-	vector<shader_info> shader_infos = { { GL_VERTEX_SHADER, "shaders/demo01/TransformVertexShader.vertexshader" },
-	{ GL_FRAGMENT_SHADER, "shaders/demo01/TextureFragmentShader.fragmentshader" } };
+	vector<shader_info> shader_infos = { { GL_VERTEX_SHADER, "shaders/demo01/Texture.vertexshader" },
+	{ GL_FRAGMENT_SHADER, "shaders/demo01/Texture.fragmentshader" } };
 	program = LoadShaders(shader_infos);
 
-	vector<shader_info> shader_infos2 = { { GL_VERTEX_SHADER, "shaders/demo01/StandardShading.vertexshader" },
-	{ GL_FRAGMENT_SHADER, "shaders/demo01/StandardShading.fragmentshader" } };
+	vector<shader_info> shader_infos2 = { { GL_VERTEX_SHADER, "shaders/demo01/StandardShadingPhong.vertexshader" },
+	{ GL_FRAGMENT_SHADER, "shaders/demo01/StandardShadingPhong.fragmentshader" } };
 	program2 = LoadShaders(shader_infos2);
 
 	vector<shader_info> shader_infos3 = { { GL_VERTEX_SHADER, "shaders/demo01/StandardShadingGouraud.vertexshader" },

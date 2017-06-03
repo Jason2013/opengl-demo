@@ -1,0 +1,15 @@
+[submodule "external/cmake-modules"]
+	path = external/cmake-modules
+	url = https://github.com/rpavlik/cmake-modules.git
+[submodule "external/glew-win32-binaries"]
+	path = external/glew-win32-binaries
+	url = https://git.oschina.net/chenchang/glew-win32-binaries.git
+[submodule "external/glfw-win32-binaries"]
+	path = external/glfw-win32-binaries
+	url = https://git.oschina.net/chenchang/glfw-win32-binaries.git
+[submodule "external/glfw-win64-binaries"]
+	path = external/glfw-win64-binaries
+	url = https://git.oschina.net/chenchang/glfw-win64-binaries.git
+[submodule "external/glm"]
+	path = external/glm
+	url = https://git.oschina.net/chenchang/glm.git
